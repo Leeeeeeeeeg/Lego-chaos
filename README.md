@@ -4,12 +4,13 @@ A browser-based LEGO-style multiplayer game where you can build, drive, fly, and
 
 ## Features
 - **First-Person Gameplay**: Walk, run, and jump around the world.
+- **Blocky Player Model**: LEGO-like character with face and limbs.
 - **Multiplayer**: Real-time synchronization of players, blocks, and vehicles.
-- **Building System**: Place and remove blocks with grid snapping.
-- **Vehicle System**: Build cars and planes. The game automatically detects seats, engines, and wheels/wings to create drivable vehicles.
-- **Combat**: Hitscan blaster to damage other players, blocks, and vehicles.
-- **Destruction**: Blocks and vehicles have HP and can be destroyed.
-- **Effects**: Low-HP vignette for players, smoke for damaged vehicles, and HP bars.
+- **Building System**: Place and remove blocks with grid snapping, rotation, and edges.
+- **Vehicle System**: Build cars and planes. The game automatically detects seats, engines, and wheels/wings.
+- **Combat**: Blaster weapon with recoil, muzzle flash, and damage.
+- **Visual Improvements**: Tiled ground, block edges, and grid helper.
+- **Effects**: Low-HP vignette and camera shake for players, smoke for damaged vehicles.
 
 ## Tech Stack
 - **Frontend**: React, Three.js, @react-three/fiber, @react-three/rapier (Physics)
@@ -23,9 +24,9 @@ A browser-based LEGO-style multiplayer game where you can build, drive, fly, and
    npm install
    ```
 
-2. Build the shared package:
+2. Build the project:
    ```bash
-   npm run build -w shared
+   npm run build
    ```
 
 ## Running the Game Locally
@@ -53,53 +54,42 @@ To install and run the game on a remote server:
    cd brick-rigs-clone
    ```
 
-2. **Install dependencies:**
+2. **Install dependencies and build:**
    ```bash
    npm install
-   ```
-
-3. **Build the project:**
-   ```bash
    npm run build
    ```
 
-4. **Environment Variables:**
-   Create a `.env` file in the `server` directory if you need to change the port or other settings (default is 3001).
-
-5. **Running with a Process Manager (Recommended):**
-   It's recommended to use `pm2` to keep the server running:
+3. **Running with a Process Manager (Recommended):**
    ```bash
    npm install -g pm2
    pm2 start server/dist/index.js --name "game-server"
    ```
 
-6. **Serving the Client:**
-   The `client/dist` folder contains the built static files. You can serve them using Nginx, Apache, or a simple Node.js static server:
+4. **Serving the Client:**
    ```bash
    npm install -g serve
    serve -s client/dist -l 3000
    ```
-
-7. **Network Configuration:**
-   - Ensure port `3000` (client) and `3001` (socket server) are open in your server's firewall.
-   - Update the socket connection URL in `client/src/network.ts` if your server uses a different IP or domain.
 
 ## Controls
 - **WASD**: Move player / Drive vehicle
 - **Space**: Jump
 - **Shift**: Sprint
 - **Mouse**: Look
-- **Left Click**: Action (Shoot / Place Block / Remove Block)
-- **1**: Weapon Mode
-- **2**: Build Mode
-- **3**: Remove Mode
+- **Left Click / ACTION Button**: Action (Shoot / Place Block / Remove Block)
+- **B**: Build Mode
+- **X / Delete**: Remove Mode
+- **0**: Weapon Mode
+- **1-9**: Select different blocks from the catalog
+- **R**: Rotate block (Build mode)
 - **E**: Enter/Exit Vehicle (Look at a 'Seat' block to enter)
 - **Arrow Keys**: Pitch and Roll for Planes
 - **ESC**: Unlock Mouse
 
 ## Building a Vehicle
 1. Place a **Seat** block.
-2. Place an **Engine** block connected to the seat (directly or via other blocks).
+2. Place an **Engine** block connected to the seat.
 3. Place at least 4 **Wheels** for a Car, or 2 **Wings** for a Plane.
 4. Look at the **Seat** and press **E** to start driving/flying.
 

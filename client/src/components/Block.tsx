@@ -6,15 +6,21 @@ export function Block({ block }: { block: BlockState }) {
   if (!blockDef) return null;
 
   return (
-    <mesh
+    <group
       position={[block.position.x, block.position.y, block.position.z]}
       rotation={new THREE.Euler().setFromQuaternion(new THREE.Quaternion(block.rotation.x, block.rotation.y, block.rotation.z, block.rotation.w))}
       userData={{ blockId: block.id }}
-      castShadow
-      receiveShadow
     >
-      <boxGeometry args={[blockDef.size.x, blockDef.size.y, blockDef.size.z]} />
-      <meshStandardMaterial color={blockDef.color} />
+      <mesh castShadow receiveShadow>
+        <boxGeometry args={[blockDef.size.x, blockDef.size.y, blockDef.size.z]} />
+        <meshStandardMaterial color={blockDef.color} />
+      </mesh>
+
+      {/* Edges */}
+      <lineSegments>
+          <edgesGeometry args={[new THREE.BoxGeometry(blockDef.size.x, blockDef.size.y, blockDef.size.z)]} />
+          <lineBasicMaterial color="black" transparent opacity={0.2} />
+      </lineSegments>
 
       {blockDef.shape === 'box' && (
           <group position={[0, blockDef.size.y/2, 0]}>
@@ -24,6 +30,6 @@ export function Block({ block }: { block: BlockState }) {
               </mesh>
           </group>
       )}
-    </mesh>
+    </group>
   );
 }

@@ -16,10 +16,55 @@ export function RemotePlayer({ player }: { player: PlayerState }) {
 
   return (
     <group ref={meshRef}>
-      <mesh position={[0, 0.9, 0]} castShadow userData={{ playerId: player.id }}>
-        <capsuleGeometry args={[0.4, 1.0]} />
-        <meshStandardMaterial color={player.isAlive ? "royalblue" : "red"} />
-      </mesh>
+      <group position={[0, 0, 0]} userData={{ playerId: player.id }}>
+        {/* Torso */}
+        <mesh position={[0, 0.75, 0]} castShadow>
+          <boxGeometry args={[0.6, 0.7, 0.3]} />
+          <meshStandardMaterial color={player.isAlive ? "royalblue" : "red"} />
+        </mesh>
+
+        {/* Head */}
+        <group position={[0, 1.3, 0]}>
+            <mesh castShadow>
+              <boxGeometry args={[0.35, 0.35, 0.35]} />
+              <meshStandardMaterial color="#ffe0bd" />
+            </mesh>
+            {/* Face - Eyes */}
+            <mesh position={[0.07, 0.05, -0.18]}>
+                <boxGeometry args={[0.05, 0.05, 0.01]} />
+                <meshStandardMaterial color="black" />
+            </mesh>
+            <mesh position={[-0.07, 0.05, -0.18]}>
+                <boxGeometry args={[0.05, 0.05, 0.01]} />
+                <meshStandardMaterial color="black" />
+            </mesh>
+            {/* Mouth */}
+            <mesh position={[0, -0.08, -0.18]}>
+                <boxGeometry args={[0.1, 0.02, 0.01]} />
+                <meshStandardMaterial color="black" />
+            </mesh>
+        </group>
+
+        {/* Arms */}
+        <mesh position={[0.4, 0.75, 0]} castShadow>
+          <boxGeometry args={[0.2, 0.6, 0.2]} />
+          <meshStandardMaterial color="#ffe0bd" />
+        </mesh>
+        <mesh position={[-0.4, 0.75, 0]} castShadow>
+          <boxGeometry args={[0.2, 0.6, 0.2]} />
+          <meshStandardMaterial color="#ffe0bd" />
+        </mesh>
+
+        {/* Legs */}
+        <mesh position={[0.15, 0.2, 0]} castShadow>
+          <boxGeometry args={[0.25, 0.4, 0.25]} />
+          <meshStandardMaterial color="#333" />
+        </mesh>
+        <mesh position={[-0.15, 0.2, 0]} castShadow>
+          <boxGeometry args={[0.25, 0.4, 0.25]} />
+          <meshStandardMaterial color="#333" />
+        </mesh>
+      </group>
 
       <Html position={[0, 2, 0]} center>
         <div style={{ width: '50px', height: '5px', background: '#333', border: '1px solid #000' }}>

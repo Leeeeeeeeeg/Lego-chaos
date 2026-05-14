@@ -12,6 +12,7 @@ export function PlayerController() {
   const setToolMode = useGameStore((state) => state.setToolMode);
   const setKey = useGameStore((state) => state.setKey);
   const keys = useGameStore((state) => state.keys);
+  const setSelectedBlockType = useGameStore((state) => state.setSelectedBlockType);
   const localPlayerId = useGameStore((state) => state.localPlayerId);
   const localPlayer = useGameStore((state) => (localPlayerId ? state.gameState.players[localPlayerId] : null));
 
@@ -21,11 +22,27 @@ export function PlayerController() {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       setKey(e.code, true);
+
+      // Mode shortcuts
       if (e.code === 'KeyB') setToolMode(ToolMode.Build);
-      if (e.code === 'KeyV') setToolMode(ToolMode.Remove);
-      if (e.code === 'Digit1') setToolMode(ToolMode.Weapon);
-      if (e.code === 'Digit2') setToolMode(ToolMode.Build);
-      if (e.code === 'Digit3') setToolMode(ToolMode.Remove);
+      if (e.code === 'KeyX' || e.code === 'Delete') setToolMode(ToolMode.Remove);
+
+      // Weapon shortcut
+      if (e.code === 'Digit0') setToolMode(ToolMode.Weapon);
+
+      // Block selection 1-9
+      const digitMatch = e.code.match(/^Digit([1-9])$/);
+      if (digitMatch) {
+          const digit = parseInt(digitMatch[1]);
+          const blockIds = [
+            'cube_1x1x1', 'brick_2x1x1', 'plate_2x2x0.25', 'long_brick_4x1x1',
+            'large_block_4x2x1', 'wedge', 'cylinder', 'wheel', 'seat'
+          ];
+          if (digit <= blockIds.length) {
+              setSelectedBlockType(blockIds[digit-1]);
+              setToolMode(ToolMode.Build);
+          }
+      }
 
       if (e.code === 'KeyE') {
           if (localPlayer?.currentVehicleId) {
@@ -52,7 +69,7 @@ export function PlayerController() {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
     };
-  }, [setToolMode, setKey, localPlayer, camera, scene]);
+  }, [setToolMode, setKey, localPlayer, camera, scene, setSelectedBlockType]);
 
   useFrame((state) => {
     if (!rb.current || (localPlayer && localPlayer.currentVehicleId)) {
@@ -71,7 +88,13 @@ export function PlayerController() {
     forward.normalize();
     right.normalize();
 
-    const speed = keys['ShiftLeft'] ? sprintSpeed : moveSpeed;
+    let speed = keys['ShiftLeft'] ? sprintSpeed : moveSpeed;
+
+    // Slowdown at low HP
+    if (localPlayer && localPlayer.lowHpState) {
+        speed *= 0.6;
+    }
+
     const inputVelocity = new THREE.Vector3();
 
     if (keys['KeyW']) inputVelocity.add(forward);
@@ -89,6 +112,12 @@ export function PlayerController() {
 
     const pos = rb.current.translation();
     camera.position.set(pos.x, pos.y + 0.8, pos.z);
+
+    // Camera shake at low HP
+    if (localPlayer && localPlayer.lowHpState) {
+        camera.position.x += (Math.random() - 0.5) * 0.05;
+        camera.position.y += (Math.random() - 0.5) * 0.05;
+    }
 
     networkManager.sendInput(
       { x: pos.x, y: pos.y, z: pos.z },
