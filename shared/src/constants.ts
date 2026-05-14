@@ -1,0 +1,9 @@
+export const MAP_SIZE = 200;
+export const TICK_RATE = 20;
+export const TICK_INTERVAL = 1000 / TICK_RATE;
+export const MAX_PLAYERS = 10;
+export const MAX_BLOCKS_PER_PLAYER = 200;
+export const MAX_TOTAL_BLOCKS = 1000;
+export const RESPAWN_TIME = 5000;
+export const GRID_SIZE = 1;
+export const BUILD_DISTANCE = 10;
